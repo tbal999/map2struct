@@ -1,6 +1,7 @@
 # generic mapStringInterface decoder
 
-I could talk about this for a while - but here's some example code instead:
+Rather than painstakingly explain it's purpose (use this like the pandas library but for map[string]interface{} to perform basic data extraction)
+here is some code:
 
 ```
 package main
