@@ -1,8 +1,6 @@
 package main
 
 import (
-	//"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-
 	"fmt"
 	"strconv"
 )
@@ -35,6 +33,32 @@ func (e *Decoder) Field(field string) string {
 	return ""
 }
 
+func (e *Decoder) Fields() []string {
+	fields := []string{}
+
+	if len(e.field) != 0 {
+		for key := range e.field {
+			fields = append(fields, key)
+		}
+	}
+
+	return fields
+}
+
+func (e *Decoder) Arrays() []string {
+	arrays := []string{}
+
+	if len(e.array) != 0 {
+		for key := range e.array {
+			if len(e.array[key]) != 0 {
+				arrays = append(arrays, key)
+			}
+		}
+	}
+
+	return arrays
+}
+
 func (e *Decoder) Array(array string) []string {
 	if _, ok := e.array[array]; ok {
 		return e.array[array]
@@ -54,8 +78,6 @@ func (e *Decoder) Print() {
 	)
 	if e.Root != nil {
 		rootName = e.Root.Name
-	} else {
-		rootName = "this is the root"
 	}
 	if len(e.field) != 0 {
 		for key := range e.field {
@@ -78,7 +100,7 @@ func (e *Decoder) Print() {
 		e.Name, rootName, fields, arrays, entities)
 }
 
-func (e *Decoder) Ingest(m map[string]interface{}) {
+func (e *Decoder) Decode(m map[string]interface{}) {
 	e.field = make(map[string]string)
 	e.array = make(map[string][]string)
 	e.sub = make(map[string]*Decoder)
@@ -123,7 +145,7 @@ func (e *Decoder) Ingest(m map[string]interface{}) {
 			sub := &Decoder{}
 			sub.Name = key
 			sub.Root = e
-			sub.Ingest(vv)
+			sub.Decode(vv)
 			e.sub[key] = sub
 		}
 	}
@@ -137,7 +159,7 @@ func (e *Decoder) decodeInterfaceSlice(m []interface{}, key string) []string {
 			sub := &Decoder{}
 			sub.Name = key
 			sub.Root = e
-			sub.Ingest(vv)
+			sub.Decode(vv)
 			e.sub[key] = sub
 		case string:
 			value := vv
