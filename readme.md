@@ -1,4 +1,4 @@
-# decoder
+# generic mapStringInterface decoder
 
 I could talk about this for a while - but here's some example code instead:
 
