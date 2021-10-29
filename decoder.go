@@ -1,39 +1,24 @@
-package decoder
+package mapstringinterfacedecoder
 
 import (
 	"fmt"
 	"strconv"
 )
 
+// Decoder - object used to ingest(decode) map[string]interface{}
 type Decoder struct {
 	Name  string
-	Root  *entity
-	Sub   map[string]*Decoder
-	Field map[string]string
-	Array map[string][]string
+	Root  *Decoder
+	sub   map[string][]*Decoder
+	field map[string]string
+	array map[string][]string
 }
 
-func (e *Decoder) Print() {
-	var (
-		rootName string
-		entities []string
-	)
-	if e.Root != nil {
-		rootName = e.Root.Name
-	}
-	if len(e.Sub) != 0 {
-		for key := range e.Sub {
-			entities = append(entities, key)
-		}
-	}
-	fmt.Printf("Name: %s\nRoot: %s\nField: %s\nArray: %v\nSub: %v\n",
-		e.Name, rootName, e.Field, e.Array, entities)
-}
-
-func (e *Decoder) Ingest(m map[string]interface{}) {
-	e.Field = make(map[string]string)
-	e.Array = make(map[string][]string)
-	e.Sub = make(map[string]*Decoder)
+// Decode - decode a map[string]interface{} ready to be investigated into more
+func (e *Decoder) Decode(m map[string]interface{}) {
+	e.field = make(map[string]string)
+	e.array = make(map[string][]string)
+	e.sub = make(map[string][]*Decoder)
 	if e.Root == nil {
 		e.Name = "root"
 	}
@@ -42,16 +27,22 @@ func (e *Decoder) Ingest(m map[string]interface{}) {
 		switch vv := v.(type) {
 		case string:
 			value := vv
-			e.Field[key] = value
+			e.field[key] = value
 		case float64:
 			value := strconv.FormatFloat(vv, 'f', -1, 64)
-			e.Field[key] = value
+			e.field[key] = value
 		case bool:
 			value := strconv.FormatBool(vv)
-			e.Field[key] = value
+			e.field[key] = value
+		case []interface{}:
+			// SKIP AT THIS STEP
+		case map[string]interface{}:
+			// SKIP AT THIS STEP
 		case nil:
 			value := "NULL"
-			e.Field[key] = value
+			e.field[key] = value
+		default:
+			e.field[key] = vv.(string) + "_type_not_supported"
 		}
 	}
 
@@ -59,7 +50,7 @@ func (e *Decoder) Ingest(m map[string]interface{}) {
 		switch vv := v.(type) {
 		case []interface{}:
 			contents := e.decodeInterfaceSlice(vv, key)
-			e.Array[key] = contents
+			e.array[key] = contents
 		}
 	}
 
@@ -69,10 +60,103 @@ func (e *Decoder) Ingest(m map[string]interface{}) {
 			sub := &Decoder{}
 			sub.Name = key
 			sub.Root = e
-			sub.Ingest(vv)
-			e.Sub[key] = sub
+			sub.Decode(vv)
+			e.sub[key] = append(e.sub[key], sub)
 		}
 	}
+}
+
+// Get - grab an array of struct subentities
+func (e *Decoder) Get(sub string) []*Decoder {
+	if _, ok := e.sub[sub]; ok {
+		return e.sub[sub]
+	} else {
+		fmt.Println(sub, "- is not a subentity")
+	}
+
+	return []*Decoder{e}
+}
+
+// Field - return the field [by name] of a struct
+func (e *Decoder) Field(field string) string {
+	if _, ok := e.field[field]; ok {
+		return e.field[field]
+	} else {
+		fmt.Println(field, "- is not a field of this entity")
+	}
+
+	return ""
+}
+
+// Fields - return the field names of a struct as an array
+func (e *Decoder) Fields() []string {
+	fields := []string{}
+
+	if len(e.field) != 0 {
+		for key := range e.field {
+			fields = append(fields, key)
+		}
+	}
+
+	return fields
+}
+
+// Arrays - return the array names of a struct
+func (e *Decoder) Arrays() []string {
+	arrays := []string{}
+
+	if len(e.array) != 0 {
+		for key := range e.array {
+			if len(e.array[key]) != 0 {
+				arrays = append(arrays, key)
+			}
+		}
+	}
+
+	return arrays
+}
+
+// Array - return the array [by name] of a struct
+func (e *Decoder) Array(array string) []string {
+	if _, ok := e.array[array]; ok {
+		return e.array[array]
+	} else {
+		fmt.Println(array, "- is not an array of this entity")
+	}
+
+	return []string{}
+}
+
+// Print - print out a struct
+func (e *Decoder) Print() {
+	var (
+		rootName string
+		entities []string
+		fields   []string
+		arrays   []string
+	)
+	if e.Root != nil {
+		rootName = e.Root.Name
+	}
+	if len(e.field) != 0 {
+		for key := range e.field {
+			fields = append(fields, key)
+		}
+	}
+	if len(e.array) != 0 {
+		for key := range e.array {
+			if len(e.array[key]) != 0 {
+				arrays = append(arrays, key)
+			}
+		}
+	}
+	if len(e.sub) != 0 {
+		for key := range e.sub {
+			entities = append(entities, key)
+		}
+	}
+	fmt.Printf("name: %s\nroot: %s\nfield: %s\narray: %v\nsub: %v\n",
+		e.Name, rootName, fields, arrays, entities)
 }
 
 func (e *Decoder) decodeInterfaceSlice(m []interface{}, key string) []string {
@@ -83,8 +167,8 @@ func (e *Decoder) decodeInterfaceSlice(m []interface{}, key string) []string {
 			sub := &Decoder{}
 			sub.Name = key
 			sub.Root = e
-			sub.Ingest(vv)
-			e.Sub[key] = sub
+			sub.Decode(vv)
+			e.sub[key] = append(e.sub[key], sub)
 		case string:
 			value := vv
 			values = append(values, value)
@@ -93,7 +177,7 @@ func (e *Decoder) decodeInterfaceSlice(m []interface{}, key string) []string {
 			values = append(values, value)
 		case []interface{}:
 			contents := e.decodeInterfaceSlice(vv, key)
-			e.Array[key] = contents
+			e.array[key] = contents
 		case bool:
 			value := strconv.FormatBool(vv)
 			values = append(values, value)
