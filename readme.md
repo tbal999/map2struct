@@ -84,31 +84,6 @@ array: [tags]
 sub: [friends]
 ```
 
-## ok so let's explore:
-
-```
-	for _, field := range d.Fields() {
-		log.Println(field)
-	}
-```
-
-## and:
-
-```
-	b := d.Get("friends")
-	for i := range b {
-		b[i].Print()
-	}
-  
-  which results:
-  
-Name: friends
-Root: root
-field: [id name]
-array: []
-sub: []
-```
-
 ## so now let's do something useful:
 ```
 func main() {
