@@ -1,7 +1,7 @@
 # generic mapStringInterface decoder
 
 ```
-TL;DR - use this like the pandas library but for map[string]interface{} to perform basic data extraction
+TL;DR - use this A LITTLE BIT like the pandas library but for map[string]interface{} to perform basic data extraction
 ```
 
 here is some EXAMPLE code:
