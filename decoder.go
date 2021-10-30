@@ -35,33 +35,19 @@ func (e *Decoder) Decode(m map[string]interface{}) {
 			value := strconv.FormatBool(vv)
 			e.field[key] = value
 		case []interface{}:
-			// SKIP AT THIS STEP
-		case map[string]interface{}:
-			// SKIP AT THIS STEP
-		case nil:
-			value := "NULL"
-			e.field[key] = value
-		default:
-			e.field[key] = vv.(string) + "_type_not_supported"
-		}
-	}
-
-	for key, v := range m {
-		switch vv := v.(type) {
-		case []interface{}:
 			contents := e.decodeInterfaceSlice(vv, key)
 			e.array[key] = contents
-		}
-	}
-
-	for key, v := range m {
-		switch vv := v.(type) {
 		case map[string]interface{}:
 			sub := &Decoder{}
 			sub.Name = key
 			sub.Root = e
 			sub.Decode(vv)
 			e.sub[key] = append(e.sub[key], sub)
+		case nil:
+			value := "NULL"
+			e.field[key] = value
+		default:
+			e.field[key] = vv.(string) + "_type_not_supported"
 		}
 	}
 }
