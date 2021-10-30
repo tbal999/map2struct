@@ -1,4 +1,4 @@
-package mapstringinterfacedecoder
+package map2struct
 
 import (
 	"encoding/json"
@@ -79,14 +79,14 @@ func TestDecode(T *testing.T) {
 		"Susie Noble,friends,1,Keller Schneider,qui",
 		"Susie Noble,friends,2,Imogene Kemp,qui",
 	}
-	exampleInput := make(map[string]interface{})
+	exampleInput := make(map[string]interface{}) // using JSON as an example dataset - we really want map[string]interface{}
 	err := json.Unmarshal([]byte(randomRubbishJSON), &exampleInput)
 	if err != nil {
 		log.Println(err)
 		T.Fail()
 	}
-	root := Decoder{}
-	root.Decode(exampleInput)
+	root := Node{}
+	root.Ingest(exampleInput)
 	friends := root.Get("friends") // get a list of the friends structs
 	tags := root.Array("tags")     // grab the tags array
 	actualOutput := []string{}
@@ -99,8 +99,12 @@ func TestDecode(T *testing.T) {
 		}
 	}
 
+	for _, v := range actualOutput {
+		log.Println(v)
+	}
+
 	if !reflect.DeepEqual(actualOutput, testOutput) {
-		fmt.Println(actualOutput)
+
 		T.Fail()
 	}
 }
