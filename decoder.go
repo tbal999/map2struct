@@ -1,4 +1,4 @@
-package mapstringinterfacedecoder
+package map2struct
 
 import (
 	"fmt"
