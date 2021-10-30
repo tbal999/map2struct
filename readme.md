@@ -91,13 +91,13 @@ func main() {
 	err := json.Unmarshal([]byte(randomRubbishJSON), &exampleInput)
 	if err != nil {
 		log.Println(err)
-		return
+		T.Fail()
 	}
-	d := Decoder{}
-	d.Decode(exampleInput)
-	b := d.Get("friends")
-	for i := range b {
-		fmt.Printf("%s,%s,%s,%s\n", d.Field("name"), b[i].Name, b[i].Field("id"), b[i].Field("name"))
+	root := Decoder{}
+	root.Decode(exampleInput)
+	friends := root.Get("friends")
+	for i := range friends {
+		fmt.Printf("%s,%s,%s,%s\n", root.Field("name"), friends[i].Name, friends[i].Field("id"), friends[i].Field("name"))
 	}
 }
 
