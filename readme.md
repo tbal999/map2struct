@@ -1,6 +1,10 @@
-# generic mapStringInterface decoder
+# generic mapStringInterface decoder for extracting of data
 
-I could talk about this for a while - but here's some example code instead:
+```
+TL;DR - use this A LITTLE BIT like the pandas library but for map[string]interface{} to perform basic data extraction
+```
+
+here is some EXAMPLE code:
 
 ```
 package main
@@ -78,31 +82,6 @@ Root:
 field: [phone greeting latitude _id balance email longitude favoriteFruit age about registered name gender company guid isActive picture index eyeColor address]
 array: [tags]
 sub: [friends]
-```
-
-## ok so let's explore:
-
-```
-	for _, field := range d.Fields() {
-		log.Println(field)
-	}
-```
-
-## and:
-
-```
-	b := d.Get("friends")
-	for i := range b {
-		b[i].Print()
-	}
-  
-  which results:
-  
-Name: friends
-Root: root
-field: [id name]
-array: []
-sub: []
 ```
 
 ## so now let's do something useful:
