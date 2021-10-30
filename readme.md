@@ -107,8 +107,12 @@ Susie Noble,friends,1,Keller Schneider
 Susie Noble,friends,2,Imogene Kemp
 ```
 
-## with this decoder you can basically create any CSV dataset you want with the right instructions.
-## and it's much _much_ easier than playing around with map[string]interface{}
+## with this decoder you can basically create any CSV dataset you want with the right instructions,
+
+todo:
+handle more types
+more test
+linting & general refactoring
 
 Have fun!
 
