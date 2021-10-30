@@ -57,9 +57,27 @@ var randomRubbishJSON = `{
 
 func TestDecode(T *testing.T) {
 	testOutput := []string{
-		"Susie Noble,friends,0,Diane Martinez\n",
-		"Susie Noble,friends,1,Keller Schneider\n",
-		"Susie Noble,friends,2,Imogene Kemp\n",
+		"Susie Noble,friends,0,Diane Martinez,consequat",
+		"Susie Noble,friends,1,Keller Schneider,consequat",
+		"Susie Noble,friends,2,Imogene Kemp,consequat",
+		"Susie Noble,friends,0,Diane Martinez,magna",
+		"Susie Noble,friends,1,Keller Schneider,magna",
+		"Susie Noble,friends,2,Imogene Kemp,magna",
+		"Susie Noble,friends,0,Diane Martinez,exercitation",
+		"Susie Noble,friends,1,Keller Schneider,exercitation",
+		"Susie Noble,friends,2,Imogene Kemp,exercitation",
+		"Susie Noble,friends,0,Diane Martinez,eu",
+		"Susie Noble,friends,1,Keller Schneider,eu",
+		"Susie Noble,friends,2,Imogene Kemp,eu",
+		"Susie Noble,friends,0,Diane Martinez,minim",
+		"Susie Noble,friends,1,Keller Schneider,minim",
+		"Susie Noble,friends,2,Imogene Kemp,minim",
+		"Susie Noble,friends,0,Diane Martinez,duis",
+		"Susie Noble,friends,1,Keller Schneider,duis",
+		"Susie Noble,friends,2,Imogene Kemp,duis",
+		"Susie Noble,friends,0,Diane Martinez,qui",
+		"Susie Noble,friends,1,Keller Schneider,qui",
+		"Susie Noble,friends,2,Imogene Kemp,qui",
 	}
 	exampleInput := make(map[string]interface{})
 	err := json.Unmarshal([]byte(randomRubbishJSON), &exampleInput)
@@ -67,16 +85,22 @@ func TestDecode(T *testing.T) {
 		log.Println(err)
 		T.Fail()
 	}
-	d := Decoder{}
-	d.Decode(exampleInput)
-	b := d.Get("friends")
+	root := Decoder{}
+	root.Decode(exampleInput)
+	friends := root.Get("friends") // get a list of the friends structs
+	tags := root.Array("tags")     // grab the tags array
 	actualOutput := []string{}
-	for i := range b {
-		out := fmt.Sprintf("%s,%s,%s,%s\n", d.Field("name"), b[i].Name, b[i].Field("id"), b[i].Field("name"))
-		actualOutput = append(actualOutput, out)
+	for tagindex := range tags {
+		for friendindex := range friends {
+			out := fmt.Sprintf("%s,%s,%s,%s,%s", root.Field("name"),
+				friends[friendindex].Name, friends[friendindex].Field("id"),
+				friends[friendindex].Field("name"), tags[tagindex])
+			actualOutput = append(actualOutput, out)
+		}
 	}
 
 	if !reflect.DeepEqual(actualOutput, testOutput) {
+		fmt.Println(actualOutput)
 		T.Fail()
 	}
 }
