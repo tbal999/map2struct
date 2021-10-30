@@ -1,4 +1,4 @@
-# generic mapStringInterface decoder for extracting of data
+# generic mapStringInterface decoder for extracting of data for CSV output
 
 ```
 TL;DR - use this A LITTLE BIT like the pandas library but for map[string]interface{} to perform basic data extraction
@@ -93,11 +93,11 @@ func main() {
 		log.Println(err)
 		return
 	}
-	d := Decoder{}
-	d.Decode(exampleInput)
-	b := d.Get("friends")
-	for i := range b {
-		fmt.Printf("%s,%s,%s,%s\n", d.Field("name"), b[i].Name, b[i].Field("id"), b[i].Field("name"))
+	root := Decoder{}
+	root.Decode(exampleInput)
+	friends := root.Get("friends")
+	for i := range friends {
+		fmt.Printf("%s,%s,%s,%s\n", root.Field("name"), friends[i].Name, friends[i].Field("id"), friends[i].Field("name"))
 	}
 }
 
