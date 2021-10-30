@@ -1,7 +1,5 @@
 # generic mapStringInterface tool for extracting of data for CSV output
 
-I'm not licensing this as it's such a tiny library - feel free to clone/fork/whatever
-
 ```
 TL;DR
 
