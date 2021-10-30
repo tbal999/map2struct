@@ -111,12 +111,15 @@ Susie Noble,friends,2,Imogene Kemp
 ```
 
 ## with this decoder you can basically create any CSV dataset you want with the right instructions,
-
+```
 todo:
 handle more types
 more test
 linting & general refactoring
 
+CREATE A FRONT-END WEBAPP that leverages the fact 
+that you don't need to curate structs for everything
+```
 Have fun!
 
 - Tom
