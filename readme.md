@@ -91,7 +91,7 @@ func main() {
 	err := json.Unmarshal([]byte(randomRubbishJSON), &exampleInput)
 	if err != nil {
 		log.Println(err)
-		T.Fail()
+		return
 	}
 	root := Decoder{}
 	root.Decode(exampleInput)
