@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [master]
+    branches: '*'
 jobs:
   markdown:
     name: Markdown To Confluence Action
