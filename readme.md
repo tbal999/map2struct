@@ -1,5 +1,6 @@
 # generic mapStringInterface tool for extracting of data for CSV output
 
+
 ```
 TL;DR
 
