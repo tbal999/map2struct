@@ -35,7 +35,7 @@ jobs:
         uses: ./
         with:
           key: ${{ secrets.KEY }}
-          space: "REISS"
+          space: "GITHUB"
           username: ${{ secrets.USERNAME }}
           repo: "map2struct"
           url: "https://tbal999.atlassian.net"
