@@ -98,7 +98,7 @@ func main() {
 		return
 	}
 	root := Decoder{}
-	root.Decode(exampleInput)
+	root.Ingest(exampleInput)
 	friends := root.Get("friends")
 	for i := range friends {
 		fmt.Printf("%s,%s,%s,%s\n", root.Field("name"), friends[i].Name, friends[i].Field("id"), friends[i].Field("name"))
