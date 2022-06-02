@@ -16,42 +16,6 @@ jobs:
   
     - name: Test
       run: go test -v ./...
-  markdown:
-    needs: [test]
-    name: Markdown To Confluence Action
-    runs-on: ubuntu-latest
-    steps:
-      - name: gather branch details
-        shell: bash
-        run: |
-             if [ -z "${GITHUB_HEAD_REF}" ]
-             then
-              echo NOT pull request, branch = $(echo ${GITHUB_REF#refs/heads/})
-              echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
-             else
-              echo pull request, branch = $(echo ${GITHUB_HEAD_REF})
-              echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
-             fi
-        id: extract_branch          
-      - name: checkout markdown action
-        uses: actions/checkout@v2-beta
-        with:
-          repository: xiatechs/markdown-to-confluence
-          ref: refs/tags/v1.10
-      - name: checkout branch
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-          path: './map2struct'
-          fetch-depth: 0
-      - name: run markdown to confluence action
-        uses: ./
-        with:
-          key: ${{ secrets.KEY }}
-          space: "GITHUB"
-          username: ${{ secrets.USERNAME }}
-          repo: "map2struct"
-          url: "https://tbal999.atlassian.net"
 
 
       
